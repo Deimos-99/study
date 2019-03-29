@@ -7,8 +7,10 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="sprinp-demo" />
-        <module name="test_source" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="sprinp-demo" target="1.5" />
+    </bytecodeTargetLevel>
   </component>
 </project>
