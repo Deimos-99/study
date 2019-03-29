@@ -1,6 +1,6 @@
 # spring boot 使用jsp
 
-##工程结构说明 
+## 工程结构说明 
   src/main/java java源文件,注意启动类的位置在所有的包上层    
   src/main/resources 资源文件位置    
   src/main/resources/static 静态资源文件,例如图片/js文件    
