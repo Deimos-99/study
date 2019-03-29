@@ -7,9 +7,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest
 public class UserServiceImplTest {
 
@@ -23,21 +23,18 @@ public class UserServiceImplTest {
 
 	@Test
 	public void testUserService() {
-		// 插入5个用户
-		userService.create("a", 1);
-		userService.create("b", 2);
-		userService.create("c", 3);
-		userService.create("d", 4);
-		userService.create("e", 5);
+		// 增加测试3个用户
+		userService.create("张三", 10);
+		userService.create("李四", 20);
+		userService.create("王五", 30);
 
-		// 查数据库，应该有5个用户
-		Assert.assertEquals(5, userService.getUserCount().intValue());
-
-		// 删除两个用户
-		userService.deleteByName("a");
-		userService.deleteByName("e");
-
-		// 查数据库，应该有5个用户
+		// 查询数据库用户数
 		Assert.assertEquals(3, userService.getUserCount().intValue());
+
+		// 删除张三用户
+		userService.deleteByName("张三");
+
+		// 查询数据库用户数
+		Assert.assertEquals(2, userService.getUserCount().intValue());
 	}
 }
