@@ -1,6 +1,6 @@
 package com.example.context;
 
-import com.example.bean.factory.BeanFactory;
+import com.example.bean.factory.config.ConfigurableBeanFactory;
 
-public interface ApplicationContext extends BeanFactory {
+public interface ApplicationContext extends ConfigurableBeanFactory {
 }

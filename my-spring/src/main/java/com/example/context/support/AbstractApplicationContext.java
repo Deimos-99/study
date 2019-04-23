@@ -4,15 +4,20 @@ import com.example.bean.factory.support.DefaultBeanFactory;
 import com.example.bean.factory.xml.XmlBeanDefinitionReader;
 import com.example.context.ApplicationContext;
 import com.example.core.io.Resource;
+import com.example.util.ClassUtils;
 
 public abstract class AbstractApplicationContext implements ApplicationContext {
+
+	private ClassLoader classLoader;
 
 	private DefaultBeanFactory factory;
 
 	public AbstractApplicationContext(String path) {
 		factory = new DefaultBeanFactory();
 		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
-		reader.loadDefinition(this.getResrouce(path));
+		Resource resource = this.getResrouceByPath(path);
+		reader.loadDefinition(resource);
+		factory.setBeanClassLoader(this.getBeanClassLoader());
 	}
 
 	@Override
@@ -20,6 +25,16 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
 		return factory.getBean(beanId);
 	}
 
-	public abstract Resource getResrouce(String path);
+	@Override
+	public void setBeanClassLoader(ClassLoader classLoader) {
+		this.classLoader = classLoader;
+	}
+
+	@Override
+	public ClassLoader getBeanClassLoader() {
+		return this.classLoader != null ? this.classLoader : ClassUtils.getDefaultClassLoader();
+	}
+
+	public abstract Resource getResrouceByPath(String path);
 
 }

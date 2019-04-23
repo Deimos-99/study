@@ -4,6 +4,7 @@ import com.example.bean.BeanDefinition;
 import com.example.bean.factory.BeanCreationException;
 import com.example.bean.factory.BeanDefinitionStoreException;
 import com.example.bean.factory.BeanFactory;
+import com.example.bean.factory.config.ConfigurableBeanFactory;
 import com.example.util.ClassUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -15,7 +16,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry {
+public class DefaultBeanFactory implements ConfigurableBeanFactory, BeanDefinitionRegistry {
+
+	private ClassLoader classLoader;
 
 	private Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
 
@@ -33,7 +36,8 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry {
 		if (bd == null) {
 			throw new BeanCreationException("Bean definition does not exists");
 		}
-		ClassLoader cl = ClassUtils.getDefaultClassLoader();
+//		ClassLoader cl = ClassUtils.getDefaultClassLoader();
+		ClassLoader cl = this.getBeanClassLoader();
 		try {
 			Class<?> clazz = cl.loadClass(bd.getBeanClassName());
 			return clazz.newInstance();
@@ -45,5 +49,15 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry {
 	@Override
 	public void registerBeanDefinition(String beanId, BeanDefinition beanDefinition) {
 		beanDefinitionMap.put(beanId, beanDefinition);
+	}
+
+	@Override
+	public void setBeanClassLoader(ClassLoader classLoader) {
+		this.classLoader = classLoader;
+	}
+
+	@Override
+	public ClassLoader getBeanClassLoader() {
+		return this.classLoader != null ? this.classLoader : ClassUtils.getDefaultClassLoader();
 	}
 }

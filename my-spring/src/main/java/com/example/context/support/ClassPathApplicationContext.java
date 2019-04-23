@@ -10,7 +10,7 @@ public class ClassPathApplicationContext extends AbstractApplicationContext{
 	}
 
 	@Override
-	public Resource getResrouce(String path) {
+	public Resource getResrouceByPath(String path) {
 		return new ClassPathResource(path);
 	}
 }
