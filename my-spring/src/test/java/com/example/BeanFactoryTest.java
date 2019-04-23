@@ -31,8 +31,15 @@ public class BeanFactoryTest {
 		BeanDefinition beanDefinition = beanFactory.getDefinition("userService");
 		Assert.assertEquals("com.example.service.v1.UserService", beanDefinition.getBeanClassName());
 
+		Assert.assertTrue(beanDefinition.isSingleton());
+		Assert.assertFalse(beanDefinition.isPrototype());
+		Assert.assertEquals(BeanDefinition.SCOPE_DEFAULT, beanDefinition.getScope());
+
 		UserService userService = (UserService) beanFactory.getBean("userService");
 		Assert.assertNotNull(userService);
+
+		UserService userService1 = (UserService) beanFactory.getBean("userService");
+		Assert.assertEquals(userService, userService1);
 	}
 
 	@Test

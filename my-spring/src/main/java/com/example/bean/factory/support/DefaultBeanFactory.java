@@ -16,7 +16,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DefaultBeanFactory implements ConfigurableBeanFactory, BeanDefinitionRegistry {
+public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
+		implements ConfigurableBeanFactory, BeanDefinitionRegistry {
 
 	private ClassLoader classLoader;
 
@@ -32,18 +33,19 @@ public class DefaultBeanFactory implements ConfigurableBeanFactory, BeanDefiniti
 
 	@Override
 	public Object getBean(String beanId) {
-		BeanDefinition bd = beanDefinitionMap.get(beanId);
+		BeanDefinition bd = this.getDefinition(beanId);
 		if (bd == null) {
 			throw new BeanCreationException("Bean definition does not exists");
 		}
-//		ClassLoader cl = ClassUtils.getDefaultClassLoader();
-		ClassLoader cl = this.getBeanClassLoader();
-		try {
-			Class<?> clazz = cl.loadClass(bd.getBeanClassName());
-			return clazz.newInstance();
-		} catch (Exception e) {
-			throw new BeanCreationException("error creating " + bd.getBeanClassName(), e);
+		if (bd.isSingleton()) {
+			Object bean = this.getSingleton(beanId);
+			if (bean == null) {
+				bean = createBean(bd);
+				this.registerSingleton(beanId, bean);
+			}
+			return bean;
 		}
+		return createBean(bd);
 	}
 
 	@Override
@@ -59,5 +61,17 @@ public class DefaultBeanFactory implements ConfigurableBeanFactory, BeanDefiniti
 	@Override
 	public ClassLoader getBeanClassLoader() {
 		return this.classLoader != null ? this.classLoader : ClassUtils.getDefaultClassLoader();
+	}
+
+	private Object createBean(BeanDefinition bd) {
+		//		ClassLoader cl = ClassUtils.getDefaultClassLoader();
+		ClassLoader cl = this.getBeanClassLoader();
+		String beanClassName = bd.getBeanClassName();
+		try {
+			Class<?> clazz = cl.loadClass(beanClassName);
+			return clazz.newInstance();
+		} catch (Exception e) {
+			throw new BeanCreationException("error creating " + bd.getBeanClassName(), e);
+		}
 	}
 }
