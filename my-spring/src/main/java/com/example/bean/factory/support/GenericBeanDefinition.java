@@ -1,4 +1,4 @@
-package com.example.bean.factory;
+package com.example.bean.factory.support;
 
 import com.example.bean.BeanDefinition;
 

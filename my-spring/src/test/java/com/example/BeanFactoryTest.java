@@ -1,26 +1,33 @@
 package com.example;
 
-
 import com.example.bean.BeanDefinition;
 import com.example.bean.factory.BeanFactory;
 import com.example.bean.factory.support.DefaultBeanFactory;
+import com.example.bean.factory.xml.XmlBeanDefinitionReader;
+import com.example.core.io.ClassPathResource;
 import com.example.service.v1.UserService;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class BeanTest {
+public class BeanFactoryTest {
 
+	private DefaultBeanFactory beanFactory;
+	private XmlBeanDefinitionReader reader;
 	@BeforeMethod
-	public void setUp() {}
+	public void setUp() {
+		beanFactory = new DefaultBeanFactory();
+		reader = new XmlBeanDefinitionReader(beanFactory);
+	}
 
 	@AfterMethod
 	public void tearDown() {}
 
 	@Test
 	public void getBeanTest() {
-		BeanFactory beanFactory = new DefaultBeanFactory("application-v1.xml");
+		reader.loadDefinition(new ClassPathResource("application-v1.xml"));
+
 		BeanDefinition beanDefinition = beanFactory.getDefinition("userService");
 		Assert.assertEquals("com.example.service.v1.UserService", beanDefinition.getBeanClassName());
 
@@ -31,7 +38,8 @@ public class BeanTest {
 	@Test
 	public void testValidateBean() {
 		try {
-			BeanFactory beanFactory = new DefaultBeanFactory("application-v1.xml");
+			reader.loadDefinition(new ClassPathResource("application-v1.xml"));
+
 			beanFactory.getBean("xxx");
 		} catch (Exception e) {
 			return;
@@ -42,7 +50,7 @@ public class BeanTest {
 	@Test
 	public void testValidateXml() {
 		try {
-			new DefaultBeanFactory("xx.xml");
+			reader.loadDefinition(new ClassPathResource("xx-v1.xml"));
 		} catch (Exception e) {
 			return;
 		}
